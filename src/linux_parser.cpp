@@ -68,7 +68,6 @@ vector<int> LinuxParser::Pids() {
   return pids;
 }
 
-// TODO: Read and return the system memory utilization
 // use MemTotal - MemFree from /proc/meminfo
 float LinuxParser::MemoryUtilization() {
   float memtotal, memfree, val;
@@ -88,7 +87,6 @@ float LinuxParser::MemoryUtilization() {
   return (memtotal - memfree) / memtotal; 
 }
 
-// TODO: Read and return the system uptime
 long LinuxParser::UpTime() { 
   long uptime;
   string line;
@@ -115,7 +113,18 @@ long LinuxParser::ActiveJiffies() { return 0; }
 long LinuxParser::IdleJiffies() { return 0; }
 
 // TODO: Read and return CPU utilization
-vector<string> LinuxParser::CpuUtilization() { return {}; }
+vector<int> LinuxParser::CpuUtilization() { 
+  string line, cpu;
+  int user, nice, system, idle, iowait, irq, softirq, steal, guest, guest_nice;
+  std::ifstream stream(kProcDirectory + kStatFilename);
+  if (stream.is_open()){
+    std::getline(stream, line);
+    std::istringstream linestream{line};
+    linestream >> cpu >> user >> nice >> system >> idle >> iowait >> irq >> softirq >> steal >> guest >> guest_nice;
+  }
+
+  return {user, nice, system, idle, iowait, irq, softirq, steal, guest, guest_nice}; 
+}
 
 // TODO: Read and return the total number of processes
 int LinuxParser::TotalProcesses() { 
