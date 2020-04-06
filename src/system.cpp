@@ -3,6 +3,7 @@
 #include <set>
 #include <string>
 #include <vector>
+#include <algorithm>
 
 #include "linux_parser.h"
 #include "process.h"
@@ -17,8 +18,13 @@ using std::vector;
 // TODO: Return the system's CPU
 Processor& System::Cpu() { return cpu_; }
 
+bool System::Compare(Process p1, Process p2){
+    return p1.CpuUtilization() > p2.CpuUtilization();
+}
+
 // TODO: Return a container composed of the system's processes
 vector<Process>& System::Processes() {
+    processes_.clear();
     vector<int> pids = LinuxParser::Pids();
     for (auto i = 0 ; i < pids.size(); i++){
         int id = pids[i];
@@ -26,6 +32,7 @@ vector<Process>& System::Processes() {
         process.pid = id;
         processes_.push_back(process);
     }
+    std::sort(processes_.begin(), processes_.end(), Compare);
     return processes_; 
 }
 

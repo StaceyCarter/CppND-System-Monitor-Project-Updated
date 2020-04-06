@@ -22,6 +22,9 @@ class System {
  private:
   Processor cpu_{};
   std::vector<Process> processes_{};
+  static bool Compare(Process p1, Process p2);
 };
+
+
 
 #endif
