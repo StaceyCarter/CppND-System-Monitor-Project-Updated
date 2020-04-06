@@ -26,7 +26,8 @@ bool System::Compare(Process p1, Process p2){
 vector<Process>& System::Processes() {
     processes_.clear();
     vector<int> pids = LinuxParser::Pids();
-    for (auto i = 0 ; i < pids.size(); i++){
+    int size = pids.size();
+    for (int i = 0 ; i < size; i++){
         int id = pids[i];
         Process process;
         process.pid = id;

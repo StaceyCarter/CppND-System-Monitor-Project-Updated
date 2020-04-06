@@ -141,6 +141,7 @@ int LinuxParser::TotalProcesses() {
       }
     }
   }
+  return val;
 }
 
 // TODO: Read and return the number of running processes
@@ -197,30 +198,30 @@ float LinuxParser::CpuUtilization(int pid){
   long utime, stime, cutime, cstime, starttime;
   std::ifstream stream(kProcDirectory + to_string(pid) + kStatFilename);
   if (stream.is_open()){
-  std::getline(stream, line);
-  std::istringstream linestream{line};
-  for (int i = 1; i <= 22; i++){
-    linestream >> val;
-    if (i == 14){
-      utime = std::stol(val);
+    std::getline(stream, line);
+    std::istringstream linestream{line};
+    for (int i = 1; i <= 22; i++) {
+      linestream >> val;
+      if (i == 14){
+        utime = std::stol(val);
+      }
+      if (i == 15){
+        stime = std::stol(val);
+      }
+      if (i == 16){
+        cutime = std::stol(val);
+      }
+      if (i == 17){
+        cstime = std::stol(val);
+      }
+      if (i == 22){
+        starttime = std::stol(val);
+      }
     }
-    if (i == 15){
-      stime = std::stol(val);
     }
-    if (i == 16){
-      cutime = std::stol(val);
-    }
-    if (i == 17){
-      cstime = std::stol(val);
-    }
-    if (i == 22){
-      starttime = std::stol(val);
-    }
-  }
-  long total_time = utime + stime + cutime + cstime;
-  float seconds = UpTime() - (starttime / sysconf(_SC_CLK_TCK));
-  return (total_time / sysconf(_SC_CLK_TCK)) / seconds;
-  }
+    long total_time = utime + stime + cutime + cstime;
+    float seconds = UpTime() - (starttime / sysconf(_SC_CLK_TCK));
+    return (total_time / sysconf(_SC_CLK_TCK)) / seconds;
 }
 
 // TODO: Read and return the user ID associated with a process
